@@ -1,0 +1,9 @@
+.env*
+.git
+data
+tests
+work
+__pycache__
+*.pyc
+*.mp3
+*.wav

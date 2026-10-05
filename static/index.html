@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#174bc4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="A private Tamil voice companion for everyday wellness, with a caregiver view.">
+  <title>நலம் · Nalam</title>
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-definitions" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.5 4.6a5.5 5.5 0 0 0-7.8 0L12 5.3l-.7-.7a5.5 5.5 0 0 0-7.8 7.8L12 21l8.5-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 4 6 8H3v8h3l5 4V4ZM16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 6h4l2-3h4l2 3h4a1 1 0 0 1 1 1v13H3V7a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-food" viewBox="0 0 24 24"><path d="M4 3v7m3-7v7m3-7v7M4 8h6m-3 2v11M18 3c-3 4-4 7-3 10h4V3h-1Zm1 10v8"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8"/></symbol>
+    <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="14" cy="3" r="2"/><path d="m10 8 4-2 3 5 4 1M10 8l-4 5M14 7l-3 7 5 3 1 5M11 14l-4 8"/></symbol>
+    <symbol id="i-stretch" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="m3 3 5 7h8l5-7M12 10v6m0 0-5 6m5-6 5 6"/></symbol>
+    <symbol id="i-mood" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14c2 3 6 3 8 0M8 9h.1M16 9h.1"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 14.4A9 9 0 0 1 9.6 3 9 9 0 1 0 21 14.4Z"/></symbol>
+    <symbol id="i-family" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m2-17a3 3 0 0 1 0 6m1 5c2 1 3 3 3 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 8-3 8-3 10h18c0-2-3-2-3-10Zm-9 13h6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="நலம் முகப்பு"><span class="brand-mark"><svg class="icon"><use href="#i-heart"/></svg></span><span>நலம்<small>NALAM</small></span></a>
+    <button id="caregiver-open" class="quiet-button"><svg class="icon"><use href="#i-family"/></svg><span>குடும்பம்</span></button>
+  </header>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="offline-note" class="notice" hidden>இணையம் கிடைக்கவில்லை. குரல் உதவிக்கு இணையம் தேவை.</div>
+  <div id="review-note" class="notice review-note" hidden>மாதிரி அறிக்கையுடன் பார்த்துப் பழகலாம் · Sample walkthrough</div>
+
+  <main id="main-content">
+    <section id="login-view" class="setup-view" hidden>
+      <div class="setup-symbol"><svg class="icon"><use href="#i-heart"/></svg></div>
+      <h1>வணக்கம் அம்மா</h1>
+      <p>உங்கள் குடும்பத்தினருடன் தொடங்கலாம்.</p>
+      <form id="login-form" class="panel setup-form" lang="en">
+        <label for="family-code">Family access code</label>
+        <input id="family-code" type="password" required autocomplete="current-password" placeholder="Your private family code">
+        <button class="button primary" type="submit">உள்ளே போகலாம்</button>
+        <p class="secondary">Your caregiver sets this up once. Health information stays behind this sign-in.</p>
+      </form>
+    </section>
+
+    <section id="consent-view" class="setup-view" hidden>
+      <h1>சேர்ந்து தொடங்கலாம்</h1>
+      <p>முதலில் உங்கள் குடும்பத்தினர் அமைத்துத் தரட்டும்.</p>
+      <div class="panel" lang="en">
+        <h2>Set up with your mom</h2>
+        <p>Report photos and voice questions go to OpenAI to create explanations. Saved health information is encrypted on this server. Make sure she agrees and understands that the voice is AI-generated.</p>
+        <p>The app provides wellness education. Her clinician decides treatment and medical follow-up.</p>
+        <button id="consent-setup" class="button primary">Open caregiver setup</button>
+      </div>
+    </section>
+
+    <div id="app-view" hidden>
+      <nav class="main-nav" aria-label="முக்கிய பகுதிகள்">
+        <button class="nav-button active" data-page="today" aria-current="page"><svg class="icon"><use href="#i-sun"/></svg><span>இன்று</span></button>
+        <button class="nav-button" data-page="reports"><svg class="icon"><use href="#i-camera"/></svg><span>அறிக்கை</span></button>
+        <button class="nav-button" data-page="food"><svg class="icon"><use href="#i-food"/></svg><span>உணவு</span></button>
+        <button class="nav-button" data-page="ask"><svg class="icon"><use href="#i-mic"/></svg><span>பேசலாம்</span></button>
+      </nav>
+
+      <section id="page-today" class="page">
+        <div class="greeting"><span class="eyebrow" id="today-date"></span><h1 id="greeting-title">வணக்கம் அம்மா</h1><p>ஒவ்வொன்றாகப் பார்த்துக்கலாம்.</p></div>
+        <div class="voice-card">
+          <div><span class="voice-label">உங்களுக்காக ஒரு குரல்</span><h2>இன்றைய உதவியைக் கேட்கலாம்</h2><p>இயல்பான பேச்சுத் தமிழில்.</p></div>
+          <button id="hear-today" class="voice-button"><svg class="icon"><use href="#i-play"/></svg><span>கேட்கலாம்</span></button>
+        </div>
+        <div class="section-row"><h2>இன்று கொஞ்சம் கவனம்</h2><span class="secondary" id="progress-text"></span></div>
+        <div id="tasks" class="task-grid"></div>
+        <div class="small-note"><svg class="icon"><use href="#i-heart"/></svg><p>உங்களுக்கு வசதியாகச் செய்யலாம். இப்போது முடியாவிட்டால் பிறகு பார்த்துக்கலாம்.</p></div>
+        <button id="enable-reminders" class="button outline full"><svg class="icon"><use href="#i-bell"/></svg>நினைவூட்டல் வேண்டுமா?</button>
+        <p class="secondary install-note" id="install-note">iPhone-ல் Safari → Share → Add to Home Screen.</p>
+      </section>
+
+      <section id="page-reports" class="page" hidden>
+        <div class="greeting"><span class="eyebrow">புரிஞ்சுக்கலாம்</span><h1>உங்கள் அறிக்கை</h1><p>படம் எடுத்து, எளிமையாகக் கேட்கலாம்.</p></div>
+        <div class="panel upload-panel">
+          <svg class="icon feature-icon"><use href="#i-camera"/></svg><h2>புதிய அறிக்கை</h2>
+          <p>எண்கள் தெளிவாகத் தெரியும்படி படம் எடுங்க.</p>
+          <button id="report-upload" class="button primary full"><svg class="icon"><use href="#i-camera"/></svg>படம் எடுக்கலாம்</button>
+          <input id="report-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" capture="environment" hidden>
+          <p class="secondary">எண்களை குடும்பத்தினர் சரிபார்த்த பிறகு விளக்கம் கிடைக்கும்.</p>
+        </div>
+        <div id="reports-list" class="stack"></div>
+      </section>
+
+      <section id="page-food" class="page" hidden>
+        <div class="greeting"><span class="eyebrow">நம் வீட்டுச் சாப்பாடு</span><h1>என்ன சாப்பிடலாம்?</h1><p>பழக்கமான உணவில் சிறிய மாற்றங்கள்.</p></div>
+        <div class="panel food-intro"><h2>காய்கறி, பருப்பு சேர்த்துக்கலாம்</h2><p id="food-tip"></p><button id="hear-food" class="button outline"><svg class="icon"><use href="#i-volume"/></svg>கேட்கலாம்</button></div>
+        <div id="meals" class="meal-grid"></div>
+        <p class="secondary">இவை பொதுவான உணவு யோசனைகள். உங்களுக்கான உணவுக் கட்டுப்பாடுகளை குடும்பத்தினருடன் பார்த்துக்கலாம்.</p>
+        <button id="food-question" class="button primary full">சாப்பாடு பற்றி கேட்கலாம்</button>
+      </section>
+
+      <section id="page-ask" class="page" hidden>
+        <div class="greeting"><span class="eyebrow">பொறுமையாகக் கேட்போம்</span><h1>தமிழில் பேசலாம்</h1><p>உணவு, நடை, தூக்கம் பற்றி கேளுங்க.</p></div>
+        <div class="panel microphone-panel"><button id="record-button" class="microphone-button" aria-label="தமிழில் கேள்வி சொல்லலாம்"><svg class="icon"><use href="#i-mic"/></svg></button><h2 id="record-label">அழுத்திப் பேசலாம்</h2><p id="record-note">முடிந்ததும் மீண்டும் அழுத்துங்க.</p></div>
+        <form id="ask-form" class="stack">
+          <label for="question-input" id="question-label">உங்கள் கேள்வி</label>
+          <textarea id="question-input" maxlength="1200" rows="3" placeholder="இன்று என்ன சாப்பிடலாம்?"></textarea>
+          <div class="button-row"><button id="hear-question" class="button outline" type="button"><svg class="icon"><use href="#i-volume"/></svg>நான் சொன்னதைக் கேட்க</button><button class="button primary" type="submit">சரி, கேட்கலாம்</button></div>
+        </form>
+        <div class="suggestions"><button data-question="இன்று என்ன சாப்பிடலாம்?">சாப்பாடு</button><button data-question="நல்லா தூங்க என்ன செய்யலாம்?">தூக்கம்</button><button data-question="இன்று மனசு கொஞ்சம் கவலையா இருக்கு.">மனசு</button></div>
+        <div id="chat-answer" hidden></div>
+      </section>
+
+      <section id="page-caregiver" class="page caregiver-page" lang="en" hidden>
+        <div class="greeting"><span class="eyebrow">FOR YOUR FAMILY</span><h1>Caregiver view</h1><p>Confirm her report, then help her take one small step.</p></div>
+        <div class="caregiver-nav"><button data-care="reports" class="chip selected">Reports</button><button data-care="routine" class="chip">Routine</button><button data-care="history" class="chip">Check-ins</button><button data-care="languages" class="chip">Badaga</button><button data-care="privacy" class="chip">Privacy</button></div>
+        <section id="care-reports"><div class="notice">Confirm every number and unit against the photo. Confirmation checks transcription; it does not replace clinician review.</div><button id="load-sample" class="button outline full" hidden>Load a fictional sample report · no API usage</button><div id="care-report-list" class="stack"></div></section>
+        <section id="care-routine" hidden>
+          <form id="profile-form" class="panel stack">
+            <div class="form-grid"><label>Name in Tamil<input name="name" maxlength="50" required></label><label>Age<input name="age" type="number" min="18" max="110" required></label><label>Her timezone<input name="timezone" list="timezones" required><datalist id="timezones"><option value="Asia/Kolkata"><option value="America/Denver"><option value="America/New_York"><option value="Europe/London"><option value="UTC"></datalist></label><label>Food preference<select name="diet"><option value="vegetarian">Vegetarian</option><option value="mixed">Mixed</option></select></label><label>Mobility<select name="mobility"><option value="comfortable">Comfortable walking</option><option value="limited">Limited mobility / pain</option><option value="needs_help">Needs assistance</option></select></label><label>Starting walk (minutes)<input name="walk_minutes" type="number" min="1" max="30" required></label></div>
+            <label class="checkbox-label"><input name="light_activity_ok" type="checkbox">Comfortable light activity has been reviewed for her abilities and any medical restrictions.</label>
+            <label>Food allergies / restrictions<input name="allergies" maxlength="300" placeholder="Leave blank only if none are known"></label>
+            <label>Known conditions / exercise restrictions<textarea name="conditions" maxlength="500" rows="2"></textarea></label>
+            <label>Doctor's instructions<textarea name="clinician_instructions" maxlength="1500" rows="3" placeholder="The app can explain instructions; it cannot prescribe or change treatment."></textarea></label>
+            <h2>Gentle reminders</h2><div id="reminder-fields" class="form-grid"></div>
+            <div class="form-grid"><label>Quiet hours start<input name="quiet_start" type="time" required></label><label>Quiet hours end<input name="quiet_end" type="time" required></label><label>Spoken language<select name="language" id="language-select"><option value="ta">Conversational Tamil</option><option value="bfq">Reviewed Badaga recordings</option></select></label></div>
+            <p class="secondary">iPhone push reminders need HTTPS, iOS 16.4+, installation on the Home Screen and notification permission. Tap a reminder to hear the prompt. The Python server must stay running.</p>
+            <button type="submit" class="button primary">Save her routine</button><button type="button" id="test-reminder" class="button outline">Send a test reminder to subscribed devices</button>
+          </form>
+        </section>
+        <section id="care-history" hidden><div id="history-list" class="stack"></div></section>
+        <section id="care-languages" hidden>
+          <div class="panel stack"><h2>Build a Badaga voice pack</h2><p>Start with short recordings made and reviewed by a fluent Badaga speaker. The app uses these for daily prompts. Free-form report explanations continue in Tamil until Badaga has been independently validated.</p><p id="badaga-progress"></p>
+            <form id="badaga-form" class="stack"><label>Phrase<select id="badaga-key"></select></label><p id="badaga-source" class="source-quote" lang="ta"></p><label>Native-speaker audio<input id="badaga-file" type="file" accept="audio/*" required></label><label class="checkbox-label"><input id="badaga-reviewed" type="checkbox" required>A fluent speaker has checked its meaning and pronunciation, and agrees to its use.</label><button class="button primary">Save reviewed recording</button></form>
+          </div>
+        </section>
+        <section id="care-privacy" hidden>
+          <div class="panel stack"><h2>Her information, her choice</h2><p>Photos and voice questions are sent to OpenAI for processing. API data is not used for model training by default, but provider abuse-monitoring logs may be retained for up to 30 days. This app uses store=false for text responses.</p><p>Health records, pending photos, saved answers, audio and push subscriptions are encrypted locally. A report photo is deleted from the active record after you confirm the numbers. Voice recordings are processed without saving the input recording. No advertising or analytics.</p>
+            <label class="checkbox-label"><input id="privacy-consent" type="checkbox">She understands and agrees to AI processing and the AI-generated voice. I have explained this to her in a language she understands.</label>
+            <button id="save-consent" class="button primary">Save this choice</button><a class="button outline" href="/api/export" download>Download private records</a>
+            <details><summary>Delete all saved information</summary><p>This removes reports, conversations, check-ins, audio packs and notification subscriptions from this server. Provider retention follows its own policy. Keep any export or backup private.</p><label>Type DELETE to confirm<input id="delete-confirm" autocomplete="off" placeholder="DELETE"></label><button id="delete-data" class="button danger">Delete saved information</button></details>
+            <button id="logout" class="button outline">Sign out of this device</button>
+            <div id="source-links" class="sources"></div>
+          </div>
+        </section>
+        <button id="return-mom" class="button outline full">Back to அம்மா</button>
+      </section>
+      <footer class="app-footer">நலமாக இருக்க உதவி · AI குரல் உதவி</footer>
+    </div>
+  </main>
+
+  <div id="audio-dock" class="audio-dock" hidden><div><span id="audio-label">குரல் உதவி</span><button id="audio-close" class="icon-button" aria-label="குரலை நிறுத்த"><svg class="icon"><use href="#i-close"/></svg></button></div><audio id="audio-player" controls preload="none"></audio></div>
+  <dialog id="caregiver-dialog"><form id="caregiver-login" class="stack" lang="en"><div class="section-row"><h2>Caregiver access</h2><button id="dialog-close" type="button" class="icon-button" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></div><label for="caregiver-pin">Caregiver PIN</label><input id="caregiver-pin" type="password" required autocomplete="off"><p class="secondary">Keeps report confirmation and routine changes with your family.</p><button class="button primary" type="submit">Unlock caregiver view</button></form></dialog>
+  <dialog id="answer-dialog"><div id="report-answer"></div><button id="answer-close" class="button outline full">சரி</button></dialog>
+</body>
+</html>
